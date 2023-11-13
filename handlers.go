@@ -12,7 +12,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	dataRequest := &dataRequest{}
 	err := json.NewDecoder(r.Body).Decode(dataRequest)
 	if err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		http.Error(w, getErrorJson(HandlerCalculateHandlerJsonDecodeError.Message), HandlerCalculateHandlerJsonDecodeError.HTTPCode)
 		return
 	}
 	data := dataRequestToData(dataRequest)
@@ -29,7 +29,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	dataResponse := getDataResponse(factorialA, factorialB)
 	err = json.NewEncoder(w).Encode(dataResponse)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		http.Error(w, getErrorJson(HandlerCalculateHandlerJsonEncodeError.Message), HandlerCalculateHandlerJsonEncodeError.HTTPCode)
 		return
 	}
 }

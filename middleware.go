@@ -14,8 +14,7 @@ func middleware(next httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := validateRequest(w, r, ps)
 		if err != nil {
-			errString := fmt.Sprintf("Invalid request: %s", err.Error())
-			http.Error(w, errString, http.StatusBadRequest)
+			http.Error(w, getErrorJson(MiddlewareIncorrectInputError.Message), MiddlewareIncorrectInputError.HTTPCode)
 			return
 		}
 		next(w, r, ps)

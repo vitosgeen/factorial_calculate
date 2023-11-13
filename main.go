@@ -7,8 +7,10 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+const httpPort = ":8989"
+
 func main() {
 	router := httprouter.New()
 	router.POST("/calculate", middleware(calculateHandler))
-	log.Fatal(http.ListenAndServe(":8989", router))
+	log.Fatal(http.ListenAndServe(httpPort, router))
 }
