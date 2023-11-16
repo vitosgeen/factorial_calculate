@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"sync"
 
@@ -9,12 +8,12 @@ import (
 )
 
 func calculateHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	dataRequest := &dataRequest{}
-	err := json.NewDecoder(r.Body).Decode(dataRequest)
+	dataRequest, err := getDataRequestDecode(r.Body)
 	if err != nil {
 		http.Error(w, getErrorJson(HandlerCalculateHandlerJsonDecodeError.Message), HandlerCalculateHandlerJsonDecodeError.HTTPCode)
 		return
 	}
+
 	data := dataRequestToData(dataRequest)
 
 	wg := sync.WaitGroup{}
@@ -27,7 +26,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	wg.Wait()
 
 	dataResponse := getDataResponse(factorialA, factorialB)
-	err = json.NewEncoder(w).Encode(dataResponse)
+	err = getDataRequestEncode(w, dataResponse)
 	if err != nil {
 		http.Error(w, getErrorJson(HandlerCalculateHandlerJsonEncodeError.Message), HandlerCalculateHandlerJsonEncodeError.HTTPCode)
 		return

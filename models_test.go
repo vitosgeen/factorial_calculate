@@ -46,6 +46,13 @@ func Test_calculateFactorial(t *testing.T) {
 			},
 			want: 24,
 		},
+		{
+			name: "factorial of 77 (overflow)",
+			args: args{
+				number: 77,
+			},
+			want: 44,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

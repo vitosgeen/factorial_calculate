@@ -6,8 +6,8 @@ type data struct {
 }
 
 type dataRequest struct {
-	A int `json:"a"`
-	B int `json:"b"`
+	A int `json:"a" validate:"required"`
+	B int `json:"b" validate:"required"`
 }
 
 type dataResponse struct {

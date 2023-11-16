@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -22,21 +20,42 @@ func middleware(next httprouter.Handle) httprouter.Handle {
 }
 
 func validateRequest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	dataRequest := &dataRequest{}
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, dataRequest)
+	body, err := readRequestBody(r)
 	if err != nil {
 		return err
 	}
 
-	if dataRequest.A < 0 || dataRequest.B < 0 {
+	dataRequest, err := unmarshalRequestBody(body)
+	if err != nil {
+		return err
+	}
+
+	err = validateDataRequest(dataRequest)
+	if err != nil {
+		return err
+	}
+
+	err = validateDataRequestStruct(dataRequest)
+	if err != nil {
+		return err
+	}
+
+	resetRequestBody(r, body)
+	return nil
+}
+
+func validateDataRequestStruct(dataReq dataRequest) error {
+	validate := validator.New()
+	err := validate.Struct(dataReq)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateDataRequest(dataReq dataRequest) error {
+	if dataReq.A < 0 || dataReq.B < 0 {
 		return fmt.Errorf("a and b must be positive")
 	}
-
-	r.Body = io.NopCloser(bytes.NewReader(body))
-
 	return nil
 }
