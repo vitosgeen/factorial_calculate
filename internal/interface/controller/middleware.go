@@ -1,18 +1,22 @@
-package main
+package controller
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
+	"factorial_calculate/internal/apperrors"
+	"factorial_calculate/internal/domain/model"
+	"factorial_calculate/internal/utils"
+
+	"github.com/go-playground/validator"
 	"github.com/julienschmidt/httprouter"
 )
 
-func middleware(next httprouter.Handle) httprouter.Handle {
+func (f *factorialCalculateController) Middleware(next httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := validateRequest(w, r, ps)
 		if err != nil {
-			http.Error(w, getErrorJson(MiddlewareIncorrectInputError.Message), MiddlewareIncorrectInputError.HTTPCode)
+			http.Error(w, apperrors.GetErrorJson(apperrors.MiddlewareIncorrectInputError.Message), apperrors.MiddlewareIncorrectInputError.HTTPCode)
 			return
 		}
 		next(w, r, ps)
@@ -20,12 +24,12 @@ func middleware(next httprouter.Handle) httprouter.Handle {
 }
 
 func validateRequest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	body, err := readRequestBody(r)
+	body, err := utils.ReadRequestBody(r)
 	if err != nil {
 		return err
 	}
 
-	dataRequest, err := unmarshalRequestBody(body)
+	dataRequest, err := utils.UnmarshalRequestBody(body)
 	if err != nil {
 		return err
 	}
@@ -40,11 +44,11 @@ func validateRequest(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 		return err
 	}
 
-	resetRequestBody(r, body)
+	utils.ResetRequestBody(r, body)
 	return nil
 }
 
-func validateDataRequestStruct(dataReq dataRequest) error {
+func validateDataRequestStruct(dataReq model.DataRequest) error {
 	validate := validator.New()
 	err := validate.Struct(dataReq)
 	if err != nil {
@@ -53,7 +57,7 @@ func validateDataRequestStruct(dataReq dataRequest) error {
 	return nil
 }
 
-func validateDataRequest(dataReq dataRequest) error {
+func validateDataRequest(dataReq model.DataRequest) error {
 	if dataReq.A < 0 || dataReq.B < 0 {
 		return fmt.Errorf("a and b must be positive")
 	}

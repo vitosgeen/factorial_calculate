@@ -1,19 +1,21 @@
-package main
+package controller
 
 import (
 	"fmt"
 	"testing"
+
+	"factorial_calculate/internal/domain/model"
 )
 
 func Test_validateDataRequest(t *testing.T) {
 	tests := []struct {
 		name    string
-		dataReq dataRequest
+		dataReq model.DataRequest
 		wantErr error
 	}{
 		{
 			name: "valid data request",
-			dataReq: dataRequest{
+			dataReq: model.DataRequest{
 				A: 1,
 				B: 2,
 			},
@@ -21,7 +23,7 @@ func Test_validateDataRequest(t *testing.T) {
 		},
 		{
 			name: "negative A",
-			dataReq: dataRequest{
+			dataReq: model.DataRequest{
 				A: -1,
 				B: 2,
 			},
@@ -29,7 +31,7 @@ func Test_validateDataRequest(t *testing.T) {
 		},
 		{
 			name: "negative B",
-			dataReq: dataRequest{
+			dataReq: model.DataRequest{
 				A: 1,
 				B: -2,
 			},
@@ -37,7 +39,7 @@ func Test_validateDataRequest(t *testing.T) {
 		},
 		{
 			name: "negative A and B",
-			dataReq: dataRequest{
+			dataReq: model.DataRequest{
 				A: -1,
 				B: -2,
 			},

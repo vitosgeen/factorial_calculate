@@ -1,4 +1,4 @@
-package main
+package apperrors
 
 import (
 	"encoding/json"
@@ -16,6 +16,12 @@ type AppError struct {
 }
 
 var (
+	MainListenAndServe = AppError{
+		Message:  "Failed to listen and serve",
+		Code:     "LISTEN_AND_SERVE_ERR",
+		HTTPCode: http.StatusInternalServerError,
+	}
+
 	MiddlewareIncorrectInputError = AppError{
 		Message:  "Incorrect input",
 		Code:     "INCORRECT_INPUT",
@@ -35,12 +41,12 @@ var (
 	}
 )
 
-func getErrorJson(strError string) string {
-	errString, _ := json.Marshal(getErrorResponse(strError))
+func GetErrorJson(strError string) string {
+	errString, _ := json.Marshal(GetErrorResponse(strError))
 	return string(errString)
 }
 
-func getErrorResponse(strError string) *errorResponse {
+func GetErrorResponse(strError string) *errorResponse {
 	return &errorResponse{
 		Error: strError,
 	}

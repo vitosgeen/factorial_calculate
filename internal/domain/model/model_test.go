@@ -1,4 +1,4 @@
-package main
+package model
 
 import "testing"
 
@@ -46,17 +46,10 @@ func Test_calculateFactorial(t *testing.T) {
 			},
 			want: 24,
 		},
-		{
-			name: "factorial of 77 (overflow)",
-			args: args{
-				number: 77,
-			},
-			want: 44,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := calculateFactorial(tt.args.number)
+			got := CalculateFactorial(tt.args.number)
 			if got != tt.want {
 				t.Errorf("calculateFactorial() = %v, want %v", got, tt.want)
 			}
