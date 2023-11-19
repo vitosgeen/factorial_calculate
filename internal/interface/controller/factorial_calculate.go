@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"sync"
 
 	"factorial_calculate/internal/apperrors"
 	"factorial_calculate/internal/domain/model"
@@ -39,7 +38,7 @@ func (f *factorialCalculateController) CalculateHandler(w http.ResponseWriter, r
 	}
 
 	data := model.MapDataRequestToData(dataRequest)
-	runWaitGroupFactorialCalculate(data)
+	data = f.factoctorialUsecase.RunWaitGroupFactorialCalculate(data)
 
 	dataResponse := model.MapDataToDataResponse(data)
 
@@ -48,22 +47,4 @@ func (f *factorialCalculateController) CalculateHandler(w http.ResponseWriter, r
 		http.Error(w, apperrors.GetErrorJson(apperrors.HandlerCalculateHandlerJsonEncodeError.Message), apperrors.HandlerCalculateHandlerJsonEncodeError.HTTPCode)
 		return
 	}
-}
-
-func runWaitGroupFactorialCalculate(data *model.Data) {
-	wg := sync.WaitGroup{}
-	wg.Add(2)
-	var factorialA, factorialB int
-	go calculateFactorialWorker(data.A, &wg, &factorialA)
-	go calculateFactorialWorker(data.B, &wg, &factorialB)
-	wg.Wait()
-
-	data.A = factorialA
-	data.B = factorialB
-}
-
-func calculateFactorialWorker(number int, wg *sync.WaitGroup, result *int) {
-	defer wg.Done()
-	calculatedFactorial := model.CalculateFactorial(number)
-	*result = calculatedFactorial
 }
