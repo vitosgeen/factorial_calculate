@@ -1,0 +1,24 @@
+version: '3.9'
+name: factorial_calculate
+
+services:
+  factorial_calculate:
+    container_name: factorial_calculate_app
+    tty: true
+    build:
+      context: ./../
+      dockerfile: ./build/packpage/Dockerfile
+    ports:
+      - 8989:8989
+    restart: on-failure
+    volumes:
+      - .:/factorial_calculate
+    networks:
+      - factorial_calculate_network
+
+volumes:
+  factorial_calculate:
+  
+networks:
+  factorial_calculate_network:
+    driver: bridge
